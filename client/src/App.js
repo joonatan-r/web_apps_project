@@ -85,9 +85,41 @@ function getPosts(callback) {
     fetch("http://localhost:9000/posts", { credentials: "include" })
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
-                <div key={idx} style={{height: "100px", width: "100px", border: "1px solid black"}}>
+                <div key={idx} style={{width: "100px", border: "1px solid black"}}>
                     <p>{post.user}</p>
                     <p>{post.text}</p>
+                </div>    
+            )
+        )
+        .then(res => callback(res));
+}
+
+function getPostsForUser(user, callback) {
+    fetch("http://localhost:9000/posts", {
+        method: 'POST',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user: user
+        })
+    })
+        .then(res => res.json())
+        // .then(res => res.map(user => {}))
+        .then(res => callback(res));
+}
+
+function getUsers(callback) {
+    fetch("http://localhost:9000/users", { credentials: "include" })
+        .then(res => res.json())
+        .then(res => res.map((user, idx) => 
+                <div 
+                    key={idx} 
+                    onClick={() => getPostsForUser(user, console.log)}
+                    style={{width: "100px", border: "1px solid black"}}
+                >
+                    <p>{user}</p>
                 </div>    
             )
         )
@@ -100,16 +132,18 @@ function App() {
     const [passwordInput, setPasswordInput] = useState("");
     const [postText, setPostText] = useState("");
     const [posts, setPosts] = useState([]);
+    const [users, setUsers] = useState([]);
 
+    useEffect(() => {
+        getPosts(setPosts);
+        getUsers(setUsers);
+    }, []);
     useEffect(() => {
         if (loggedIn) {
             setUsernameInput("");
             setPasswordInput("");
         }
     }, [loggedIn]);
-    useEffect(() => {
-        getPosts(setPosts);
-    }, []);
 
     return (
         <div className="App">
@@ -146,12 +180,15 @@ function App() {
             </div>
             }
             <div 
-                style={{ border: "1px solid black", display: "flex", flexDirection: "column", alignItems: "center" }}
+                style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
                 <p>Users</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {users}
+                </div>
             </div>
             <div 
-                style={{ border: "1px solid black", display: "flex", flexDirection: "column", alignItems: "center" }}
+                style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
                 <p>Posts</p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>

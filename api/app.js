@@ -89,7 +89,8 @@ app.post('/posts', (req, res) => {
     res.send(JSON.stringify(filteredPosts));
 });
 app.get('/users', (req, res) => {
-    res.send(JSON.stringify(users));
+    const usernames = users.map(user => user.username);
+    res.send(JSON.stringify(usernames));
 });
 
 // catch 404 and forward to error handler
