@@ -2,15 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 
-function callApi(callback) {
-    fetch("http://localhost:9000/apiTest") // window.location.href
-        .then(res => res.text())
-        .then(res => callback(res));
-}
-
 function createAccount(username, password, callback) {
-    fetch("http://localhost:9000/createAccount", {
+    fetch("http://localhost:9000/createAccount", { // window.location.href in build ?
         method: 'POST',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json'
         },
@@ -34,6 +29,7 @@ function createAccount(username, password, callback) {
 function login(username, password, callback) {
     fetch("http://localhost:9000/login", {
         method: 'POST',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json'
         },
@@ -53,7 +49,7 @@ function login(username, password, callback) {
 }
 
 function logout(callback) {
-    fetch("http://localhost:9000/logout")
+    fetch("http://localhost:9000/logout", { credentials: "include" })
         .then(res => res.text())
         .then(res => {
             if (res !== "logout") {
@@ -64,15 +60,33 @@ function logout(callback) {
         });
 }
 
+function post(text, callback) {
+    fetch("http://localhost:9000/newPost", {
+        method: 'POST',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            text: text
+        })
+    })
+        .then(res => res.text())
+        .then(res => {
+            if (res !== "newPost") {
+                alert("Something went wrong");
+            } else {
+                callback("");
+            }
+        });
+}
+
 function App() {
-    const [apiResponse, setApiResponse] = useState("No response from api");
     const [loggedIn, setLoggedIn] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+    const [postText, setPostText] = useState("");
 
-    useEffect(() => {
-        callApi(setApiResponse);
-    }, []);
     useEffect(() => {
         if (loggedIn) {
             setUsernameInput("");
@@ -101,13 +115,21 @@ function App() {
             </button>
             }
             {loggedIn &&
-            <button onClick={() => logout(setLoggedIn)}>Log out</button>
+            <button onClick={() => logout(setLoggedIn)}>
+                Log out
+            </button>
+            }
+            {loggedIn &&
+            <div>
+                <textarea value={postText} onChange={e => setPostText(e.target.value)}>
+                </textarea>
+                <button onClick={() => post(postText, setPostText)}>
+                    Post
+                </button>
+            </div>
             }
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Api responds with "{apiResponse}"!
-                </p>
             </header>
         </div>
     );
