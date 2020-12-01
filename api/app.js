@@ -16,36 +16,68 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use(session({secret: 'super_secret_key'}));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.locals.text = 'This is sent from api';
 
-// app.use('/', indexRouter);
+const users = [];
+
+app.use('/', indexRouter);
 app.use('/apiTest', apiRouter);
 
-app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 app.get('/setText', (req, res) => {
     app.locals.text = 'Api text changed!';
     res.send('Succesfully changed text');
+});
+app.post('/createAccount', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if (!username || !password) {
+        res.send('invalid');
+        return;
+    }
+    for (let user of users) {
+        if (user.username === username) {
+            res.send('username taken');
+            return;
+        }
+    }
+    users.push({ username: username, password: password });
+    req.session.user = username;
+    res.send('createAccount');
+});
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    for (let user of users) {
+        if (user.username === username && user.password === password) {
+            req.session.user = username;
+            res.send('login');
+            return;
+        }
+    }
+    res.send('invalid');
+});
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.send('logout');
 });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
