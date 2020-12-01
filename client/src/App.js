@@ -81,11 +81,25 @@ function post(text, callback) {
         });
 }
 
+function getPosts(callback) {
+    fetch("http://localhost:9000/posts", { credentials: "include" })
+        .then(res => res.json())
+        .then(res => res.map((post, idx) => 
+                <div key={idx} style={{height: "100px", width: "100px", border: "1px solid black"}}>
+                    <p>{post.user}</p>
+                    <p>{post.text}</p>
+                </div>    
+            )
+        )
+        .then(res => callback(res));
+}
+
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
     const [postText, setPostText] = useState("");
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         if (loggedIn) {
@@ -93,6 +107,9 @@ function App() {
             setPasswordInput("");
         }
     }, [loggedIn]);
+    useEffect(() => {
+        getPosts(setPosts);
+    }, []);
 
     return (
         <div className="App">
@@ -128,6 +145,19 @@ function App() {
                 </button>
             </div>
             }
+            <div 
+                style={{ border: "1px solid black", display: "flex", flexDirection: "column", alignItems: "center" }}
+            >
+                <p>Users</p>
+            </div>
+            <div 
+                style={{ border: "1px solid black", display: "flex", flexDirection: "column", alignItems: "center" }}
+            >
+                <p>Posts</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {posts}
+                </div>
+            </div>
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
             </header>

@@ -1,11 +1,10 @@
 const createError = require('http-errors');
 const express = require('express');
-const cors = require("cors");
+const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const indexRouter = require('./routes/index');
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
@@ -25,7 +24,6 @@ app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 const users = [];
 const posts = [];
 
-app.use('/', indexRouter);
 // app.get('/', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 // });
@@ -74,6 +72,24 @@ app.post('/newPost', (req, res) => {
 });
 app.get('/posts', (req, res) => {
     res.send(JSON.stringify(posts));
+});
+app.post('/posts', (req, res) => {
+    const filteredPosts = [];
+
+    if (!req.body.user) {
+        res.send('invalid');
+        return;
+    }
+
+    for (let post of posts) {
+        if (post.user === req.body.user) {
+            filteredPosts.push(post);
+        }
+    }
+    res.send(JSON.stringify(filteredPosts));
+});
+app.get('/users', (req, res) => {
+    res.send(JSON.stringify(users));
 });
 
 // catch 404 and forward to error handler
