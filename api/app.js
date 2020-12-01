@@ -17,7 +17,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({secret: 'super_secret_key', cookie: { secure: false }}));
+app.use(session({secret: 'super_secret_key', cookie: { secure: false, maxAge: 60000 }}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
@@ -61,6 +61,13 @@ app.post('/login', (req, res) => {
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.send('logout');
+});
+app.get('/checkLogin', (req, res) => {
+    if (!req.session.user) {
+        res.send('no');
+    } else {
+        res.send('yes');
+    }
 });
 app.post('/newPost', (req, res) => {
     if (!req.session.user || !req.body.text) {

@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 function createAccount(username, password, callback) {
     fetch("http://localhost:9000/createAccount", { // window.location.href in build ?
@@ -60,6 +60,18 @@ function logout(callback) {
         });
 }
 
+function checkLogin(callback) {
+    fetch("http://localhost:9000/checkLogin", { credentials: "include" })
+        .then(res => res.text())
+        .then(res => {
+            if (res !== "yes") {
+                callback(false);
+            } else {
+                callback(true);
+            }
+        });
+}
+
 function post(text, callback) {
     fetch("http://localhost:9000/newPost", {
         method: 'POST',
@@ -106,17 +118,29 @@ function getPostsForUser(user, callback) {
         })
     })
         .then(res => res.json())
-        // .then(res => res.map(user => {}))
+        .then(res => res.map((post, idx) => 
+                <div key={idx} style={{width: "100px", border: "1px solid black"}}>
+                    <p>{post.user}</p>
+                    <p>{post.text}</p>
+                </div>    
+            )
+        )
         .then(res => callback(res));
 }
 
-function getUsers(callback) {
+function getUsers(callback, callback2, ref) {
     fetch("http://localhost:9000/users", { credentials: "include" })
         .then(res => res.json())
         .then(res => res.map((user, idx) => 
                 <div 
                     key={idx} 
-                    onClick={() => getPostsForUser(user, console.log)}
+                    onClick={() => {
+                        if (ref.current === user) {
+                            callback2(null);
+                        } else {
+                            callback2(user);
+                        }
+                    }}
                     style={{width: "100px", border: "1px solid black"}}
                 >
                     <p>{user}</p>
@@ -133,10 +157,14 @@ function App() {
     const [postText, setPostText] = useState("");
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
+    const [postsOfUser, setPostsOfUser] = useState(null);
+    const postsOfUserRef = useRef();
+    postsOfUserRef.current = postsOfUser;
 
     useEffect(() => {
+        checkLogin(setLoggedIn);
         getPosts(setPosts);
-        getUsers(setUsers);
+        getUsers(setUsers, setPostsOfUser, postsOfUserRef);
     }, []);
     useEffect(() => {
         if (loggedIn) {
@@ -144,6 +172,13 @@ function App() {
             setPasswordInput("");
         }
     }, [loggedIn]);
+    useEffect(() => {
+        if (!postsOfUser) {
+            getPosts(setPosts);
+        } else {
+            getPostsForUser(postsOfUser, setPosts);
+        }
+    }, [postsOfUser]);
 
     return (
         <div className="App">
@@ -190,7 +225,7 @@ function App() {
             <div 
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
-                <p>Posts</p>
+                <p>Posts{postsOfUser && " of user " + postsOfUser}</p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     {posts}
                 </div>
