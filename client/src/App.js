@@ -141,6 +141,8 @@ function getUsers(callback) {
 }
 
 function App() {
+    const [enteringCredentials, setEnteringCredentials] = useState(false);
+    const [makingPost, setMakingPost] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
@@ -160,8 +162,18 @@ function App() {
         if (loggedIn) {
             setUsernameInput("");
             setPasswordInput("");
+            setEnteringCredentials(false);
+        } else {
+            setMakingPost(false);
         }
     }, [loggedIn]);
+    useEffect(() => {
+        if (enteringCredentials || makingPost) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "visible";
+        }
+    }, [enteringCredentials, makingPost]);
     useEffect(() => {
         setDisplayedUsers(users.filter(user => {
                 if (user.toLowerCase().includes(userFilter.toLowerCase())) return true;
@@ -194,26 +206,36 @@ function App() {
 
     return (
         <div className="App">
-            {!loggedIn &&
-            <div>
-                <input value={usernameInput} onChange={e => setUsernameInput(e.target.value)}>
-                </input>
-                <input 
-                    type="password"
-                    value={passwordInput} 
-                    onChange={e => setPasswordInput(e.target.value)}
-                >
-                </input>
+            {enteringCredentials &&
+            <div className="enterCredentials">
+                <div>
+                    <input value={usernameInput} onChange={e => setUsernameInput(e.target.value)}>
+                    </input>
+                    <input 
+                        type="password"
+                        value={passwordInput} 
+                        onChange={e => setPasswordInput(e.target.value)}
+                    >
+                    </input>
+                </div> 
+                <button onClick={() => {
+                    createAccount(usernameInput, passwordInput, setLoggedIn);
+                }}>
+                    Create Account
+                </button> 
+                <button onClick={() => {
+                    login(usernameInput, passwordInput, setLoggedIn);
+                }}>
+                    Log In
+                </button>
+                <button onClick={() => setEnteringCredentials(false)}>
+                    X
+                </button>
             </div>
             }
-            {!loggedIn && 
-            <button onClick={() => createAccount(usernameInput, passwordInput, setLoggedIn)}>
-                Create Account
-            </button>
-            }
-            {!loggedIn && 
-            <button onClick={() => login(usernameInput, passwordInput, setLoggedIn)}>
-                Log In
+            {!loggedIn && !enteringCredentials && 
+            <button onClick={() => setEnteringCredentials(true)}>
+                Log in or create account
             </button>
             }
             {loggedIn &&
@@ -221,12 +243,23 @@ function App() {
                 Log out
             </button>
             }
-            {loggedIn &&
-            <div>
+            {loggedIn && !makingPost &&
+            <button onClick={() => setMakingPost(true)}>
+                Make new post
+            </button>
+            }
+            {makingPost &&
+            <div className="makePost">
                 <textarea value={postText} onChange={e => setPostText(e.target.value)}>
                 </textarea>
-                <button onClick={() => post(postText, setPostText)}>
+                <button onClick={() => {
+                    post(postText, setPostText);
+                    setMakingPost(false);
+                }}>
                     Post
+                </button>
+                <button onClick={() => setMakingPost(false)}>
+                    X
                 </button>
             </div>
             }
@@ -250,9 +283,6 @@ function App() {
                     {posts}
                 </div>
             </div>
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-            </header>
         </div>
     );
 }
