@@ -4,10 +4,32 @@
   min-height: 100vh;
 }
 
+body {
+    overflow-x: hidden;
+    margin-right: calc(-1 * (100vw - 100%));
+}
+
 .enterCredentials, .makePost {
     height: 100vh;
 }
 
 .selected {
     background-color: white;
+}
+
+.post {
+    width: 100px;
+    border: 1px solid black;
+}
+
+.user {
+    width: 100px;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 
@@ -101,7 +100,7 @@ function getPosts(callback) {
     fetch("http://localhost:9000/posts", { credentials: "include" })
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
-                <div key={idx} style={{width: "100px", border: "1px solid black"}}>
+                <div key={idx} className="post">
                     <p>{post.time}</p>
                     <p>{post.user}</p>
                     <p>{post.text}</p>
@@ -124,7 +123,7 @@ function getPostsForUser(user, callback) {
     })
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
-                <div key={idx} style={{width: "100px", border: "1px solid black"}}>
+                <div key={idx} className="post">
                     <p>{post.time}</p>
                     <p>{post.user}</p>
                     <p>{post.text}</p>
@@ -169,9 +168,9 @@ function App() {
     }, [loggedIn]);
     useEffect(() => {
         if (enteringCredentials || makingPost) {
-            document.body.style.overflow = "hidden";
+            document.body.style.overflowY = "hidden";
         } else {
-            document.body.style.overflow = "visible";
+            document.body.style.overflowY = "visible";
         }
     }, [enteringCredentials, makingPost]);
     useEffect(() => {
@@ -189,8 +188,7 @@ function App() {
                             setPostsOfUser(user);
                         }
                     }}
-                    style={{width: "100px", border: "1px solid black"}}
-                    className={(postsOfUser === user && "selected") || ""}
+                    className={(postsOfUser === user && "selected user") || "user"}
                 >
                     <p>{user}</p>
                 </div>    
@@ -263,23 +261,19 @@ function App() {
                 </button>
             </div>
             }
-            <div 
-                style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-            >
+            <div className="centered">
                 <p>Users</p>
                 <input value={userFilter} onChange={e => setUserFilter(e.target.value)}>
                 </input>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div className="centered">
                     {displayedUsers}
                 </div>
             </div>
-            <div 
-                style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-            >
+            <div className="centered">
                 <p>
                     {(postsOfUser && "Posts of user " + postsOfUser) || "Posts of all users"}
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div className="centered">
                     {posts}
                 </div>
             </div>
