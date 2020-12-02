@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 function createAccount(username, password, callback) {
     fetch("http://localhost:9000/createAccount", { // use window.location.href in build?
@@ -73,6 +73,10 @@ function checkLogin(callback) {
 }
 
 function post(text, callback) {
+    if (text.length > 300) {
+        alert("Post is too long! Limit the length to 300 characters");
+        return;
+    }
     fetch("http://localhost:9000/newPost", {
         method: 'POST',
         credentials: "include",
@@ -146,8 +150,6 @@ function App() {
     const [users, setUsers] = useState([]);
     const [displayedUsers, setDisplayedUsers] = useState([]);
     const [postsOfUser, setPostsOfUser] = useState(null);
-    const postsOfUserRef = useRef();
-    postsOfUserRef.current = postsOfUser;
 
     useEffect(() => {
         checkLogin(setLoggedIn);
@@ -169,18 +171,19 @@ function App() {
                 <div 
                     key={idx} 
                     onClick={() => {
-                        if (postsOfUserRef.current === user) {
+                        if (postsOfUser === user) {
                             setPostsOfUser(null);
                         } else {
                             setPostsOfUser(user);
                         }
                     }}
                     style={{width: "100px", border: "1px solid black"}}
+                    className={(postsOfUser === user && "selected") || ""}
                 >
                     <p>{user}</p>
                 </div>    
             ));
-    }, [users, userFilter]);
+    }, [users, userFilter, postsOfUser]);
     useEffect(() => {
         if (!postsOfUser) {
             getPosts(setPosts);
