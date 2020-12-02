@@ -128,25 +128,9 @@ function getPostsForUser(user, callback) {
         .then(res => callback(res));
 }
 
-function getUsers(callback, callback2, ref) {
+function getUsers(callback) {
     fetch("http://localhost:9000/users", { credentials: "include" })
         .then(res => res.json())
-        .then(res => res.map((user, idx) => 
-                <div 
-                    key={idx} 
-                    onClick={() => {
-                        if (ref.current === user) {
-                            callback2(null);
-                        } else {
-                            callback2(user);
-                        }
-                    }}
-                    style={{width: "100px", border: "1px solid black"}}
-                >
-                    <p>{user}</p>
-                </div>    
-            )
-        )
         .then(res => callback(res));
 }
 
@@ -154,9 +138,11 @@ function App() {
     const [loggedIn, setLoggedIn] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+    const [userFilter, setUserFilter] = useState("");
     const [postText, setPostText] = useState("");
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
+    const [displayedUsers, setDisplayedUsers] = useState([]);
     const [postsOfUser, setPostsOfUser] = useState(null);
     const postsOfUserRef = useRef();
     postsOfUserRef.current = postsOfUser;
@@ -164,7 +150,7 @@ function App() {
     useEffect(() => {
         checkLogin(setLoggedIn);
         getPosts(setPosts);
-        getUsers(setUsers, setPostsOfUser, postsOfUserRef);
+        getUsers(setUsers);
     }, []);
     useEffect(() => {
         if (loggedIn) {
@@ -172,6 +158,27 @@ function App() {
             setPasswordInput("");
         }
     }, [loggedIn]);
+    useEffect(() => {
+        setDisplayedUsers(users.filter(user => {
+                if (user.toLowerCase().includes(userFilter.toLowerCase())) return true;
+                return false;
+            })
+            .map((user, idx) => 
+                <div 
+                    key={idx} 
+                    onClick={() => {
+                        if (postsOfUserRef.current === user) {
+                            setPostsOfUser(null);
+                        } else {
+                            setPostsOfUser(user);
+                        }
+                    }}
+                    style={{width: "100px", border: "1px solid black"}}
+                >
+                    <p>{user}</p>
+                </div>    
+            ));
+    }, [users, userFilter]);
     useEffect(() => {
         if (!postsOfUser) {
             getPosts(setPosts);
@@ -218,14 +225,15 @@ function App() {
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
                 <p>Users</p>
+                <input value={userFilter} onChange={e => setUserFilter(e.target.value)}></input>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    {users}
+                    {displayedUsers}
                 </div>
             </div>
             <div 
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
-                <p>Posts{postsOfUser && " of user " + postsOfUser}</p>
+                <p>{(postsOfUser && "Posts of user " + postsOfUser) || "Posts of all users"}</p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     {posts}
                 </div>
