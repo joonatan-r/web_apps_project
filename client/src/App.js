@@ -3,7 +3,7 @@ import './App.css';
 import { useEffect, useState, useRef } from 'react';
 
 function createAccount(username, password, callback) {
-    fetch("http://localhost:9000/createAccount", { // window.location.href in build ?
+    fetch("http://localhost:9000/createAccount", { // use window.location.href in build?
         method: 'POST',
         credentials: "include",
         headers: {
@@ -98,6 +98,7 @@ function getPosts(callback) {
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
                 <div key={idx} style={{width: "100px", border: "1px solid black"}}>
+                    <p>{post.time}</p>
                     <p>{post.user}</p>
                     <p>{post.text}</p>
                 </div>    
@@ -120,6 +121,7 @@ function getPostsForUser(user, callback) {
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
                 <div key={idx} style={{width: "100px", border: "1px solid black"}}>
+                    <p>{post.time}</p>
                     <p>{post.user}</p>
                     <p>{post.text}</p>
                 </div>    
@@ -193,7 +195,11 @@ function App() {
             <div>
                 <input value={usernameInput} onChange={e => setUsernameInput(e.target.value)}>
                 </input>
-                <input value={passwordInput} onChange={e => setPasswordInput(e.target.value)}>
+                <input 
+                    type="password"
+                    value={passwordInput} 
+                    onChange={e => setPasswordInput(e.target.value)}
+                >
                 </input>
             </div>
             }
@@ -225,7 +231,8 @@ function App() {
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
                 <p>Users</p>
-                <input value={userFilter} onChange={e => setUserFilter(e.target.value)}></input>
+                <input value={userFilter} onChange={e => setUserFilter(e.target.value)}>
+                </input>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     {displayedUsers}
                 </div>
@@ -233,7 +240,9 @@ function App() {
             <div 
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
-                <p>{(postsOfUser && "Posts of user " + postsOfUser) || "Posts of all users"}</p>
+                <p>
+                    {(postsOfUser && "Posts of user " + postsOfUser) || "Posts of all users"}
+                </p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     {posts}
                 </div>

@@ -21,8 +21,25 @@ app.use(session({secret: 'super_secret_key', cookie: { secure: false, maxAge: 60
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
-const users = [];
-const posts = [];
+// const users = [];
+// const posts = [];
+// mock data
+const users = [
+    {username: "test", password: "test"}, 
+    {username: "test-second", password: "test"}, 
+    {username: "test-third", password: "test"}, 
+    {username: "test-fourth", password: "test"}
+];
+const posts = [
+    {user: "test-third", text: "last test post", time: "8"},
+    {user: "test", text: "yay", time: "7"},
+    {user: "test-fourth", text: "i was here", time: "6"},
+    {user: "test-second", text: "wooooo", time: "5"},
+    {user: "test-third", text: "me too", time: "4"},
+    {user: "test-second", text: "i post stuff", time: "3"},
+    {user: "test", text: "more posting", time: "2"},
+    {user: "test", text: "mock post", time: "1"}
+];
 
 // app.get('/', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -74,7 +91,11 @@ app.post('/newPost', (req, res) => {
         res.send('invalid');
         return;
     }
-    posts.unshift({ user: req.session.user, text: req.body.text });
+    posts.unshift({ 
+        user: req.session.user, 
+        text: req.body.text, 
+        time: new Date().toLocaleString() 
+    });
     res.send('newPost');
 });
 app.get('/posts', (req, res) => {
