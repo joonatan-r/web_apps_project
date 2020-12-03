@@ -76,71 +76,89 @@ function App() {
         <div className="App">
             {enteringCredentials &&
             <div className="enterCredentials">
-                <div>
-                    <input value={usernameInput} onChange={e => setUsernameInput(e.target.value)}>
+                <div className="inputs">
+                    <input 
+                        placeholder="Username"
+                        value={usernameInput} 
+                        onChange={e => setUsernameInput(e.target.value)}
+                    >
                     </input>
                     <input 
+                        placeholder="Password"
                         type="password"
                         value={passwordInput} 
                         onChange={e => setPasswordInput(e.target.value)}
                     >
                     </input>
-                </div> 
-                <button onClick={() => {
-                    createAccount(usernameInput, passwordInput, setLoggedUser);
-                }}>
-                    Create Account
-                </button> 
-                <button onClick={() => {
-                    login(usernameInput, passwordInput, setLoggedUser);
-                }}>
-                    Log In
-                </button>
-                <button onClick={() => setEnteringCredentials(false)}>
-                    Cancel
-                </button>
+                </div>
+                <div className="btns">
+                    <button onClick={() => {
+                        createAccount(usernameInput, passwordInput, setLoggedUser);
+                    }}>
+                        Create Account
+                    </button> 
+                    <button onClick={() => {
+                        login(usernameInput, passwordInput, setLoggedUser);
+                    }}>
+                        Log In
+                    </button>
+                    <button onClick={() => setEnteringCredentials(false)}>
+                        Cancel
+                    </button>
+                </div>
             </div>
             }
             {!loggedUser && !enteringCredentials && 
-            <button onClick={() => setEnteringCredentials(true)}>
-                Log in or create account
-            </button>
+            <div className="notLoggedHeader">
+                <button onClick={() => setEnteringCredentials(true)}>
+                    Log in or create account
+                </button>
+            </div>
             }
-            {loggedUser && !makingPost &&
-            <button onClick={() => logout(setLoggedUser)}>
-                Log out
-            </button>
-            }
-            {loggedUser &&
-            <p>Logged in as {loggedUser}</p>
-            }
-            {loggedUser && !makingPost &&
-            <button onClick={() => setMakingPost(true)}>
-                Make new post
-            </button>
+            {loggedUser && 
+            <div className="loggedHeader">
+                {!makingPost &&
+                <button onClick={() => setMakingPost(true)}>
+                    Make new post
+                </button>
+                }
+                {!makingPost &&
+                <button onClick={() => logout(setLoggedUser)}>
+                    Log out
+                </button>
+                }
+                <p>Logged in as {loggedUser}</p>
+            </div>
             }
             {makingPost &&
             <div className="makePost">
-                <textarea value={postText} onChange={e => setPostText(e.target.value)}>
+                <textarea rows={10} value={postText} onChange={e => setPostText(e.target.value)}>
                 </textarea>
-                <button onClick={() => {
-                    post(postText, setPostText);
-                    setMakingPost(false);
-                }}>
-                    Post
-                </button>
-                <button onClick={() => {
-                    setMakingPost(false);
-                    setPostText("");
-                }}>
-                    Cancel
-                </button>
+                <div className="btns">
+                    <button onClick={() => {
+                        post(postText, setPostText);
+                        setMakingPost(false);
+                    }}>
+                        Post
+                    </button>
+                    <button onClick={() => {
+                        setMakingPost(false);
+                        setPostText("");
+                    }}>
+                        Cancel
+                    </button>
+                </div>
             </div>
             }
             <div className="main-container">
                 <div className="user-container">
-                    <p>Users</p>
-                    <input value={userFilter} onChange={e => setUserFilter(e.target.value)}>
+                    <h1>Users</h1>
+                    <input 
+                        placeholder="Search" 
+                        value={userFilter} 
+                        onChange={e => setUserFilter(e.target.value)}
+                        className="searchInput"
+                    >
                     </input>
                     <div className="centered">
                         {displayedUsers}
@@ -148,9 +166,9 @@ function App() {
                 </div>
                 <div className="post-container">
                     <div className="centered">
-                        <p>
-                            {(postsOfUser && "Posts of user " + postsOfUser) || "All posts"}
-                        </p>
+                        <h1>
+                            Showing: {(postsOfUser && "Posts by " + postsOfUser) || "All posts"}
+                        </h1>
                         <div className="centered">
                             {posts}
                         </div>

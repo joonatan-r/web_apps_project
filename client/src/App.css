@@ -2,11 +2,44 @@
   text-align: center;
   background-color: #282c34;
   min-height: 100vh;
+  color: white;
 }
 
 body {
     overflow-y: scroll;
     background-color: #282c34;
+}
+
+.btns {
+    display: flex;
+    flex-direction: row;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+}
+
+.loggedHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+
+.notLoggedHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 15px;
+}
+
+.loggedHeader button {
+    align-self: center;
+}
+
+.loggedHeader p {
+    margin-left: 15px;
 }
 
 .main-container {
@@ -16,12 +49,34 @@ body {
     padding: 20px;
 }
 
-.enterCredentials, .makePost {
+.enterCredentials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 50px;
     height: 100vh;
+}
+
+.makePost {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+}
+
+textarea {
+    width: 50%;
 }
 
 .selected {
     background-color: white;
+    color: black;
 }
 
 .centered {
@@ -32,8 +87,25 @@ body {
 
 .post {
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
     word-wrap: break-word;
     border: 1px solid black;
+    margin-bottom: -1px;
+}
+
+.post-info {
+    width: 10%;
+    min-width: 70px;
+    border-right: 1px solid black;
+}
+
+.post-content {
+    width: 100%;
+    height: 100%;
+    text-align: start;
+    padding: 15px;
 }
 
 .post-container {
@@ -51,14 +123,21 @@ body {
     width: 100px;
     border: 1px solid black;
     cursor: pointer;
+    margin-bottom: -1px;
 }
 
 .user:hover {
-    border: 4px solid black;
+    border-right: 4px solid black;
+    border-left: 4px solid black;
 }
 
 .user-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.searchInput {
+    margin-bottom: 10px;
+    margin-right: 10px;
 }

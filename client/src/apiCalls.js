@@ -98,10 +98,14 @@ export function getPosts(callback) {
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
                 <div key={idx} className="post">
-                    <p>{post.time}</p>
-                    <p>{post.user}</p>
-                    <p>{post.text}</p>
-                </div>    
+                    <div className="post-info">
+                        <p>{post.user}</p>
+                        <p>{post.time}</p>
+                    </div>
+                    <div className="post-content">
+                        <p>{post.text}</p>
+                    </div>
+                </div>  
             )
         )
         .then(res => callback(res));
@@ -121,9 +125,13 @@ export function getPostsForUser(user, callback) {
         .then(res => res.json())
         .then(res => res.map((post, idx) => 
                 <div key={idx} className="post">
-                    <p>{post.time}</p>
-                    <p>{post.user}</p>
-                    <p>{post.text}</p>
+                    <div className="post-info">
+                        <p>{post.user}</p>
+                        <p>{post.time}</p>
+                    </div>
+                    <div className="post-content">
+                        <p>{post.text}</p>
+                    </div>
                 </div>    
             )
         )
