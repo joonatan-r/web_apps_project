@@ -96,18 +96,7 @@ export function post(text, callback) {
 export function getPosts(callback) {
     fetch("http://localhost:9000/posts", { credentials: "include" })
         .then(res => res.json())
-        .then(res => res.map((post, idx) => 
-                <div key={idx} className="post">
-                    <div className="post-info">
-                        <p>{post.user}</p>
-                        <p>{post.time}</p>
-                    </div>
-                    <div className="post-content">
-                        <p>{post.text}</p>
-                    </div>
-                </div>  
-            )
-        )
+        .then(res => createPostElements(res))
         .then(res => callback(res));
 }
 
@@ -123,18 +112,7 @@ export function getPostsForUser(user, callback) {
         })
     })
         .then(res => res.json())
-        .then(res => res.map((post, idx) => 
-                <div key={idx} className="post">
-                    <div className="post-info">
-                        <p>{post.user}</p>
-                        <p>{post.time}</p>
-                    </div>
-                    <div className="post-content">
-                        <p>{post.text}</p>
-                    </div>
-                </div>    
-            )
-        )
+        .then(res => createPostElements(res))
         .then(res => callback(res));
 }
 
@@ -142,4 +120,43 @@ export function getUsers(callback) {
     fetch("http://localhost:9000/users", { credentials: "include" })
         .then(res => res.json())
         .then(res => callback(res));
+}
+
+function createPostElements(list) {
+    const elems = list.map((post, idx) => 
+        <div key={idx} className="post">
+            <div className="post-info">
+                <p>{post.user}</p>
+                <p>{formatDate(post.time)}</p>
+            </div>
+            <div className="post-content">
+                <p>{post.text}</p>
+            </div>
+        </div>    
+    );
+
+    if (!elems.length) {
+        return [(
+            <div key={0} className="post">
+                <div className="post-content">
+                    <p>No posts</p>
+                </div>
+            </div> 
+        )];
+    }
+    return elems;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    return toPadString(hours) + ":" + toPadString(minutes) + "\n"
+            + date.getDate() + "." + (date.getMonth()+1) + "."
+            + date.getFullYear();
+}
+
+function toPadString(n) {
+    if (n < 9) return "0" + n;
+    return "" + n;
 }

@@ -167,7 +167,7 @@ function App() {
                 <div className="post-container">
                     <div className="centered">
                         <h1>
-                            Showing: {(postsOfUser && "Posts by " + postsOfUser) || "All posts"}
+                            Showing: {postsOfUser || "All posts"}
                         </h1>
                         <div className="centered">
                             {posts}
