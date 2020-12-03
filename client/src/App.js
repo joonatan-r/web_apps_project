@@ -20,7 +20,7 @@ function createAccount(username, password, callback) {
             } else if (res === "username taken") {
                 alert("Username is already taken");
             } else if (res === "createAccount") {
-                callback(true);
+                callback(username);
             }
         });
 }
@@ -42,7 +42,7 @@ function login(username, password, callback) {
             if (res !== "login") {
                 alert("Login failed");
             } else {
-                callback(true);
+                callback(username);
             }
         });
 }
@@ -54,19 +54,19 @@ function logout(callback) {
             if (res !== "logout") {
                 alert("Something went wrong");
             } else {
-                callback(false);
+                callback(null);
             }
         });
 }
 
 function checkLogin(callback) {
     fetch("http://localhost:9000/checkLogin", { credentials: "include" })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(res => {
-            if (res !== "yes") {
-                callback(false);
+            if (res.loggedIn !== "yes") {
+                callback(null);
             } else {
-                callback(true);
+                callback(res.username);
             }
         });
 }
@@ -142,7 +142,7 @@ function getUsers(callback) {
 function App() {
     const [enteringCredentials, setEnteringCredentials] = useState(false);
     const [makingPost, setMakingPost] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedUser, setLoggedUser] = useState(null);
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
     const [userFilter, setUserFilter] = useState("");
@@ -153,19 +153,19 @@ function App() {
     const [postsOfUser, setPostsOfUser] = useState(null);
 
     useEffect(() => {
-        checkLogin(setLoggedIn);
+        checkLogin(setLoggedUser);
         getPosts(setPosts);
         getUsers(setUsers);
     }, []);
     useEffect(() => {
-        if (loggedIn) {
+        if (loggedUser) {
             setUsernameInput("");
             setPasswordInput("");
             setEnteringCredentials(false);
         } else {
             setMakingPost(false);
         }
-    }, [loggedIn]);
+    }, [loggedUser]);
     useEffect(() => {
         if (enteringCredentials || makingPost) {
             document.body.style.overflowY = "hidden";
@@ -217,31 +217,34 @@ function App() {
                     </input>
                 </div> 
                 <button onClick={() => {
-                    createAccount(usernameInput, passwordInput, setLoggedIn);
+                    createAccount(usernameInput, passwordInput, setLoggedUser);
                 }}>
                     Create Account
                 </button> 
                 <button onClick={() => {
-                    login(usernameInput, passwordInput, setLoggedIn);
+                    login(usernameInput, passwordInput, setLoggedUser);
                 }}>
                     Log In
                 </button>
                 <button onClick={() => setEnteringCredentials(false)}>
-                    X
+                    Cancel
                 </button>
             </div>
             }
-            {!loggedIn && !enteringCredentials && 
+            {!loggedUser && !enteringCredentials && 
             <button onClick={() => setEnteringCredentials(true)}>
                 Log in or create account
             </button>
             }
-            {loggedIn &&
-            <button onClick={() => logout(setLoggedIn)}>
+            {loggedUser &&
+            <button onClick={() => logout(setLoggedUser)}>
                 Log out
             </button>
             }
-            {loggedIn && !makingPost &&
+            {loggedUser &&
+            <p>Logged in as {loggedUser}</p>
+            }
+            {loggedUser && !makingPost &&
             <button onClick={() => setMakingPost(true)}>
                 Make new post
             </button>
@@ -257,7 +260,7 @@ function App() {
                     Post
                 </button>
                 <button onClick={() => setMakingPost(false)}>
-                    X
+                    Cancel
                 </button>
             </div>
             }
@@ -271,7 +274,7 @@ function App() {
             </div>
             <div className="centered">
                 <p>
-                    {(postsOfUser && "Posts of user " + postsOfUser) || "Posts of all users"}
+                    {(postsOfUser && "Posts of user " + postsOfUser) || "All posts"}
                 </p>
                 <div className="centered">
                     {posts}

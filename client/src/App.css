@@ -28,6 +28,10 @@ body {
     cursor: pointer;
 }
 
+.user:hover {
+    border: 4px solid black;
+}
+
 .centered {
     display: flex;
     flex-direction: column;

@@ -81,9 +81,9 @@ app.get('/logout', (req, res) => {
 });
 app.get('/checkLogin', (req, res) => {
     if (!req.session.user) {
-        res.send('no');
+        res.send({ loggedIn: 'no' });
     } else {
-        res.send('yes');
+        res.send({ loggedIn: 'yes', username: req.session.user });
     }
 });
 app.post('/newPost', (req, res) => {
