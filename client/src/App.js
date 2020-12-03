@@ -34,8 +34,6 @@ function App() {
             setUsernameInput("");
             setPasswordInput("");
             setEnteringCredentials(false);
-        } else {
-            setMakingPost(false);
         }
     }, [loggedUser]);
     useEffect(() => {
@@ -108,7 +106,7 @@ function App() {
                 Log in or create account
             </button>
             }
-            {loggedUser &&
+            {loggedUser && !makingPost &&
             <button onClick={() => logout(setLoggedUser)}>
                 Log out
             </button>
@@ -131,7 +129,10 @@ function App() {
                 }}>
                     Post
                 </button>
-                <button onClick={() => setMakingPost(false)}>
+                <button onClick={() => {
+                    setMakingPost(false);
+                    setPostText("");
+                }}>
                     Cancel
                 </button>
             </div>

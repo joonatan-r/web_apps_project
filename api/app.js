@@ -41,9 +41,9 @@ const posts = [
     {user: "test", text: "mock post", time: "1"}
 ];
 
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+});
 app.post('/createAccount', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
