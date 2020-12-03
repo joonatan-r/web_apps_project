@@ -1,143 +1,15 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-
-function createAccount(username, password, callback) {
-    fetch("http://localhost:9000/createAccount", { // use window.location.href in build?
-        method: 'POST',
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    })
-        .then(res => res.text())
-        .then(res => {
-            if (res === "invalid") {
-                alert("Invalid information");
-            } else if (res === "username taken") {
-                alert("Username is already taken");
-            } else if (res === "createAccount") {
-                callback(username);
-            }
-        });
-}
-
-function login(username, password, callback) {
-    fetch("http://localhost:9000/login", {
-        method: 'POST',
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    })
-        .then(res => res.text())
-        .then(res => {
-            if (res !== "login") {
-                alert("Login failed");
-            } else {
-                callback(username);
-            }
-        });
-}
-
-function logout(callback) {
-    fetch("http://localhost:9000/logout", { credentials: "include" })
-        .then(res => res.text())
-        .then(res => {
-            if (res !== "logout") {
-                alert("Something went wrong");
-            } else {
-                callback(null);
-            }
-        });
-}
-
-function checkLogin(callback) {
-    fetch("http://localhost:9000/checkLogin", { credentials: "include" })
-        .then(res => res.json())
-        .then(res => {
-            if (res.loggedIn !== "yes") {
-                callback(null);
-            } else {
-                callback(res.username);
-            }
-        });
-}
-
-function post(text, callback) {
-    if (text.length > 300) {
-        alert("Post is too long! Limit the length to 300 characters");
-        return;
-    }
-    fetch("http://localhost:9000/newPost", {
-        method: 'POST',
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            text: text
-        })
-    })
-        .then(res => res.text())
-        .then(res => {
-            if (res !== "newPost") {
-                alert("Something went wrong");
-            } else {
-                callback("");
-            }
-        });
-}
-
-function getPosts(callback) {
-    fetch("http://localhost:9000/posts", { credentials: "include" })
-        .then(res => res.json())
-        .then(res => res.map((post, idx) => 
-                <div key={idx} className="post">
-                    <p>{post.time}</p>
-                    <p>{post.user}</p>
-                    <p>{post.text}</p>
-                </div>    
-            )
-        )
-        .then(res => callback(res));
-}
-
-function getPostsForUser(user, callback) {
-    fetch("http://localhost:9000/posts", {
-        method: 'POST',
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            user: user
-        })
-    })
-        .then(res => res.json())
-        .then(res => res.map((post, idx) => 
-                <div key={idx} className="post">
-                    <p>{post.time}</p>
-                    <p>{post.user}</p>
-                    <p>{post.text}</p>
-                </div>    
-            )
-        )
-        .then(res => callback(res));
-}
-
-function getUsers(callback) {
-    fetch("http://localhost:9000/users", { credentials: "include" })
-        .then(res => res.json())
-        .then(res => callback(res));
-}
+import { 
+    createAccount, 
+    login, 
+    logout, 
+    checkLogin, 
+    post, 
+    getPosts, 
+    getPostsForUser, 
+    getUsers 
+} from './apiCalls';
 
 function App() {
     const [enteringCredentials, setEnteringCredentials] = useState(false);
@@ -170,7 +42,7 @@ function App() {
         if (enteringCredentials || makingPost) {
             document.body.style.overflowY = "hidden";
         } else {
-            document.body.style.overflowY = "visible";
+            document.body.style.overflowY = "scroll";
         }
     }, [enteringCredentials, makingPost]);
     useEffect(() => {
@@ -264,20 +136,24 @@ function App() {
                 </button>
             </div>
             }
-            <div className="centered">
-                <p>Users</p>
-                <input value={userFilter} onChange={e => setUserFilter(e.target.value)}>
-                </input>
-                <div className="centered">
-                    {displayedUsers}
+            <div className="main-container">
+                <div className="user-container">
+                    <p>Users</p>
+                    <input value={userFilter} onChange={e => setUserFilter(e.target.value)}>
+                    </input>
+                    <div className="centered">
+                        {displayedUsers}
+                    </div>
                 </div>
-            </div>
-            <div className="centered">
-                <p>
-                    {(postsOfUser && "Posts of user " + postsOfUser) || "All posts"}
-                </p>
-                <div className="centered">
-                    {posts}
+                <div className="post-container">
+                    <div className="centered">
+                        <p>
+                            {(postsOfUser && "Posts of user " + postsOfUser) || "All posts"}
+                        </p>
+                        <div className="centered">
+                            {posts}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

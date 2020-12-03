@@ -5,8 +5,15 @@
 }
 
 body {
-    overflow-x: hidden;
-    margin-right: calc(-1 * (100vw - 100%));
+    overflow-y: scroll;
+    background-color: #282c34;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
 }
 
 .enterCredentials, .makePost {
@@ -17,9 +24,27 @@ body {
     background-color: white;
 }
 
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .post {
-    width: 100px;
+    width: 100%;
+    word-wrap: break-word;
     border: 1px solid black;
+}
+
+.post-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.post-container .centered {
+    width: 100%;
 }
 
 .user {
@@ -32,7 +57,7 @@ body {
     border: 4px solid black;
 }
 
-.centered {
+.user-container {
     display: flex;
     flex-direction: column;
     align-items: center;
