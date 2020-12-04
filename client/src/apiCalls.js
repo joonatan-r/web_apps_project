@@ -1,5 +1,5 @@
 export function createAccount(username, password, callback) {
-    fetch("http://localhost:9000/createAccount", { // use window.location.href in build?
+    fetch(window.location.href + "createAccount", {
         method: 'POST',
         credentials: "include",
         headers: {
@@ -23,7 +23,7 @@ export function createAccount(username, password, callback) {
 }
 
 export function login(username, password, callback) {
-    fetch("http://localhost:9000/login", {
+    fetch(window.location.href + "login", {
         method: 'POST',
         credentials: "include",
         headers: {
@@ -45,7 +45,7 @@ export function login(username, password, callback) {
 }
 
 export function logout(callback) {
-    fetch("http://localhost:9000/logout", { credentials: "include" })
+    fetch(window.location.href + "logout", { credentials: "include" })
         .then(res => res.text())
         .then(res => {
             if (res !== "logout") {
@@ -57,7 +57,7 @@ export function logout(callback) {
 }
 
 export function checkLogin(callback) {
-    fetch("http://localhost:9000/checkLogin", { credentials: "include" })
+    fetch(window.location.href + "checkLogin", { credentials: "include" })
         .then(res => res.json())
         .then(res => {
             if (res.loggedIn !== "yes") {
@@ -94,14 +94,14 @@ export function post(text, callback) {
 }
 
 export function getPosts(callback) {
-    fetch("http://localhost:9000/posts", { credentials: "include" })
+    fetch(window.location.href + "posts", { credentials: "include" })
         .then(res => res.json())
         .then(res => createPostElements(res))
         .then(res => callback(res));
 }
 
 export function getPostsForUser(user, callback) {
-    fetch("http://localhost:9000/posts", {
+    fetch(window.location.href + "posts", {
         method: 'POST',
         credentials: "include",
         headers: {
@@ -117,7 +117,7 @@ export function getPostsForUser(user, callback) {
 }
 
 export function getUsers(callback) {
-    fetch("http://localhost:9000/users", { credentials: "include" })
+    fetch(window.location.href + "users", { credentials: "include" })
         .then(res => res.json())
         .then(res => callback(res));
 }

@@ -102,7 +102,11 @@ function App() {
                     }}>
                         Log In
                     </button>
-                    <button onClick={() => setEnteringCredentials(false)}>
+                    <button onClick={() => {
+                        setUsernameInput("");
+                        setPasswordInput("");
+                        setEnteringCredentials(false);
+                    }}>
                         Cancel
                     </button>
                 </div>
