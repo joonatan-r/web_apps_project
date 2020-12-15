@@ -23,25 +23,8 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
-// const users = [];
-// const posts = [];
-// mock data
-const users = [
-    {username: "test", password: "test"}, 
-    {username: "test-second", password: "test"}, 
-    {username: "test-third", password: "test"}, 
-    {username: "test-fourth", password: "test"}
-];
-const posts = [
-    {user: "test-third", text: "last test post", time: "2020-12-3 19:52:53"},
-    {user: "test", text: "yay", time: "2020-12-3 18:52:53"},
-    {user: "test-fourth", text: "i was here", time: "2020-12-3 17:52:53"},
-    {user: "test-second", text: "wooooo", time: "2020-12-3 16:52:53"},
-    {user: "test-third", text: "me too", time: "2020-12-3 15:52:53"},
-    {user: "test-second", text: "i post stuff", time: "2020-12-3 14:52:53"},
-    {user: "test", text: "more posting", time: "2020-12-3 13:52:53"},
-    {user: "test", text: "mock post", time: "2020-12-3 13:25:53"}
-];
+const users = [];
+const posts = [];
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
