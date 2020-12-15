@@ -1,16 +1,11 @@
 const createError = require('http-errors');
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const app = express();
 
-app.use(cors({
-    origin: 'http://localhost:3000', // for developing
-    credentials: true
-}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
