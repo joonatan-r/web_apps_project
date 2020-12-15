@@ -73,7 +73,7 @@ export function post(text, callback) {
         alert("Post is too long! Limit the length to 300 characters");
         return;
     }
-    fetch("http://localhost:9000/newPost", {
+    fetch(window.location.href + "newPost", {
         method: 'POST',
         credentials: "include",
         headers: {
